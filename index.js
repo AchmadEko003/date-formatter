@@ -254,8 +254,8 @@ const PururuDate = class PururuDate {
     const timeRes = [];
     const arrFormat = format.split(":");
 
-    const tempTime = new Date(date);
-    // const tempTime = date ? new Date(date) : new Date()
+    // const tempTime = new Date(date);
+    const tempTime = date ? new Date(date) : new Date()
 
     arrFormat.forEach((element) => {
       timeRes.push(tFormattingType(tempTime, element));
