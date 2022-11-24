@@ -142,6 +142,8 @@ const PururuDate = class PururuDate {
       return new Date(year, month + 1, 0);
     } else if (type === "fl") {
       return [new Date(year, month, 1), new Date(year, month + 1, 0)];
+    } else {
+      return 'Format not valid'
     }
   }
 
