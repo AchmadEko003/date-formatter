@@ -50,6 +50,32 @@ dateFormat("dd mmmm yyyy");
 // 01 January 2022
 ```
 
+Time Format:
+
+```js
+// Basic usage
+timeFormat("HH:MM:ss", "16:20:10");
+// 16:20:10
+
+// Hour and minutes
+timeFormat("HH:MM", "16:20");
+// 16:20
+
+// For 12-Clock
+// Basic usage
+timeFormat("hh:MM:ss", "16:20:10");
+// 04:20:10 PM
+
+// Hour and minutes
+timeFormat("hh:MM", "16:20");
+// 04:20 PM
+
+// Note that if you don't include the date value,
+// timeFormat use the current time
+timeFormat("HH:MM:ss");
+// 16:20:10
+```
+
 Other:
 
 ```js
