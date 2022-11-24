@@ -143,7 +143,7 @@ const PururuDate = class PururuDate {
     } else if (type === "fl") {
       return [new Date(year, month, 1), new Date(year, month + 1, 0)];
     } else {
-      return 'Format not valid'
+      return "Format not valid";
     }
   }
 
@@ -255,9 +255,17 @@ const PururuDate = class PururuDate {
   static timeFormat(format, date = null) {
     const timeRes = [];
     const arrFormat = format.split(":");
+    const timeFormat = date ? date.split(":") : null;
 
-    // const tempTime = new Date(date);
-    const tempTime = date ? new Date(date) : new Date()
+    let tempTime = new Date();
+    tempTime = new Date(
+      tempTime.getFullYear(),
+      tempTime.getMonth(),
+      tempTime.getDate(),
+      timeFormat ? timeFormat[0] : tempTime.getHours(),
+      timeFormat ? timeFormat[1] : tempTime.getMinutes(),
+      timeFormat ? timeFormat[2] : tempTime.getSeconds()
+    );
 
     arrFormat.forEach((element) => {
       timeRes.push(tFormattingType(tempTime, element));
@@ -269,7 +277,7 @@ const PururuDate = class PururuDate {
 
     return timeRes.join(":");
   }
-}
+};
 
 function dFormattingType(payload, type) {
   const char = type.charAt(0).toLowerCase();
@@ -361,4 +369,4 @@ function setZero(payload) {
   return payload;
 }
 
-module.exports = PururuDate
+module.exports = PururuDate;
