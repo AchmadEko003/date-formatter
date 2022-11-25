@@ -13,20 +13,6 @@ const months = [
   "November",
   "December",
 ];
-const shortMonths = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 const days = [
   "Sunday",
@@ -37,7 +23,6 @@ const days = [
   "Friday",
   "Saturday",
 ];
-const shortDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const symbols = ["-", "/", " ", "_", ",", "."];
 // #endregion
@@ -114,15 +99,15 @@ const PururuDate = class PururuDate {
    * @param {Date} date date value for first, last or first and last value
    * @returns {Date|Array} Date type value or array value for first and last type
    * @example
-   * var month = PururuDate.firstOrLastMonth('f', '2022-01-01');
+   * var month = PururuDate.firstOrLastMonth('first', '2022-01-01');
    *
    * @note
    *
-   * 'f' => Get first date on month
+   * 'first' => Get first date on month
    *
-   * 'l' => Get last date on month
+   * 'last' => Get last date on month
    *
-   * 'fl' => Get first and last date on month (return array)
+   * 'firstlast' => Get first and last date on month (return array)
    */
   static firstOrLastMonth(type, date = null) {
     let tempDate = null;
@@ -136,11 +121,11 @@ const PururuDate = class PururuDate {
     const year = tempDate.getFullYear();
     const month = tempDate.getMonth();
 
-    if (type === "f") {
+    if (type === "first") {
       return new Date(year, month, 1);
-    } else if (type === "l") {
+    } else if (type === "last") {
       return new Date(year, month + 1, 0);
-    } else if (type === "fl") {
+    } else if (type === "firstlast") {
       return [new Date(year, month, 1), new Date(year, month + 1, 0)];
     } else {
       return "Format not valid";
@@ -212,26 +197,37 @@ const PururuDate = class PururuDate {
    *
    * yyyy = Full length year
    */
-  static dateFormat(format, date) {
-    let tempSeparator = "";
-    const dateRes = [];
-    const tempDate = date ? new Date(date) : new Date();
+  static dateISOFormat(format, date = new Date()) {
+    try {
+      const dateRes = [];
+      
+      if (!PururuDate.isDate(date)) {
+        date = date.includes("T") ? date.split("T")[0] : date
+        const dateSeparator = symbols.filter((type) => {
+          return date.includes(type) === true;
+        })[0];
+        date = new Date(date.replaceAll(dateSeparator, "/"));
+      }
+      
+      const dateConvertRes = setDateParams(date)
+      
+      const tempSeparator = symbols.filter((type) => {
+        const ds = format.includes(type);
+        return ds === true;
+      })[0];
+      
+      if (!symbols.includes(tempSeparator)) {
+        return "Format not match";
+      }
+      
+      format.split(tempSeparator).forEach((element) => {
+        dateRes.push(dateConvertRes[element]);
+      });
 
-    tempSeparator = symbols.filter((type) => {
-      const ds = format.includes(type);
-      return ds === true;
-    })[0];
-
-    if (!symbols.includes(tempSeparator)) {
-      return "Format not match";
+      return dateRes.join(tempSeparator);
+    } catch (e) {
+      return e;
     }
-
-    const formatFormula = format.split(tempSeparator);
-    formatFormula.forEach((element) => {
-      dateRes.push(dFormattingType(tempDate, element));
-    });
-
-    return dateRes.join(tempSeparator);
   }
 
   /** Formatting time
@@ -279,40 +275,21 @@ const PururuDate = class PururuDate {
   }
 };
 
-function dFormattingType(payload, type) {
-  const char = type.charAt(0).toLowerCase();
-
-  if (char === "d") {
-    if (type === "dddd") {
-      return days[payload.getDay()];
-    } else if (type === "ddd") {
-      return shortDays[payload.getDay()];
-    } else if (type === "dd") {
-      return setZero(payload.getDate());
-    } else {
-      return parseInt(payload.getDate());
-    }
+function setDateParams (payload) {
+  date = {
+    d: parseInt(payload.getDate()),
+    dd: setZero(payload.getDate()),
+    ddd: days[payload.getDay()].slice(0, 3),
+    dddd: days[payload.getDay()],
+    m: parseInt(payload.getMonth() + 1),
+    mm: setZero(payload.getMonth() + 1),
+    mmm: months[payload.getMonth()].slice(0, 3),
+    mmmm: months[payload.getMonth()],
+    yy: parseInt(payload.getFullYear().toString().slice(-2)),
+    yyyy: payload.getFullYear()
   }
 
-  if (char === "m") {
-    if (type === "mmmm") {
-      return months[payload.getMonth()];
-    } else if (type === "mmm") {
-      return shortMonths[payload.getMonth()];
-    } else if (type === "mm") {
-      return setZero(payload.getMonth() + 1);
-    } else {
-      return parseInt(payload.getMonth() + 1);
-    }
-  }
-
-  if (char === "y") {
-    if (type === "yyyy") {
-      return payload.getFullYear();
-    } else {
-      return parseInt(payload.getFullYear().toString().slice(-2));
-    }
-  }
+  return date
 }
 
 function tFormattingType(payload, type) {

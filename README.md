@@ -13,109 +13,125 @@ $ npm install @achmadeko003/date-formatter
 Date format:
 
 ```js
-import dateFormat from "@achmadeko003/date-formatter";
+import format from "@achmadeko003/date-formatter";
 
 // Basic usage
-dateFormat("dd mmmm yyyy", "2022-01-01");
+format.dateISOFormat("dd mmmm yyyy", "2022-01-01");
 // 01 January 2022
 
 // Month and year only
-dateFormat("mmmm yyyy", "2022-01-01");
+format.dateISOFormat("mmmm yyyy", "2022-01-01");
 // January 2022
 
 // Date and month only
-dateFormat("dd mmmm", "2022-01-01");
+format.dateISOFormat("dd mmmm", "2022-01-01");
 // 01 January
 
 // You can also change format separator
 // Space separator
-dateFormat("dddd mmmm yyyy", "2022-01-01");
+format.dateISOFormat("dddd mmmm yyyy", "2022-01-01");
 // Saturday January 2022
 
 // Dash separator
-dateFormat("dddd-mmmm-yyyy", "2022-01-01");
+format.dateISOFormat("dddd-mmmm-yyyy", "2022-01-01");
 // Saturday-January-2022
 
 // Slash separator
-dateFormat("dddd/mmmm/yyyy", "2022-01-01");
+format.dateISOFormat("dddd/mmmm/yyyy", "2022-01-01");
 // Saturday/January/2022
 
 // Dot separator
-dateFormat("dddd.mmmm.yyyy", "2022-01-01");
+format.dateISOFormat("dddd.mmmm.yyyy", "2022-01-01");
 // Saturday.January.2022
 
 // Note that if you don't include the date value,
-// dateFormat use the current date
-dateFormat("dd mmmm yyyy");
+// dateISOFormat use the current date
+format.dateISOFormat("dd mmmm yyyy");
 // 01 January 2022
 ```
 
 Time Format:
 
 ```js
+import format from "@achmadeko003/date-formatter";
+
 // Basic usage
-timeFormat("HH:MM:ss", "16:20:10");
+format.timeFormat("HH:MM:ss", "16:20:10");
 // 16:20:10
 
 // Hour and minutes
-timeFormat("HH:MM", "16:20");
+format.timeFormat("HH:MM", "16:20");
 // 16:20
 
 // For 12-Clock
 // Basic usage
-timeFormat("hh:MM:ss", "16:20:10");
+format.timeFormat("hh:MM:ss", "16:20:10");
 // 04:20:10 PM
 
 // Hour and minutes
-timeFormat("hh:MM", "16:20");
+format.timeFormat("hh:MM", "16:20");
 // 04:20 PM
 
 // Note that if you don't include the date value,
 // timeFormat use the current time
-timeFormat("HH:MM:ss");
+format.timeFormat("HH:MM:ss");
 // 16:20:10
 ```
 
 Other:
 
 ```js
+import format from "@achmadeko003/date-formatter";
+
 // Next 1 or more date
-nextBackDate("n", 1, "2022-10-02")
+format.nextBackDate("n", 1, "2022-10-02")
 // 2022-10-03T00:00:00.000Z
 
 // Back 1 or more date
-nextBackDate("b", 1, "2022-10-01")
+format.nextBackDate("b", 1, "2022-10-01")
 // 2022-10-01T00:00:00.000Z
 
 // Note if you don't include the date value,
 // nextBackDate use current date
-nextBackDate("n", 1)
+format.nextBackDate("n", 1)
 // 2022-10-03T00:00:00.000Z
 
 // Next 1 or more month
-nextBackMonth("n", 1, "2022-10-02")
+format.nextBackMonth("n", 1, "2022-10-02")
 // 2022-11-02T00:00:00.000Z
 
 // Back 1 or more month
-nextBackMonth("b", 1, "2022-10-02")
+format.nextBackMonth("b", 1, "2022-10-02")
 // 2022-09-02T00:00:00.000Z
 
 // Note if you don't include the date value,
 // nextBackMonth use current date
-nextBackMonth("n", 1)
+format.nextBackMonth("n", 1)
 // 2022-11-02T00:00:00.000Z
 
 // Check if value Date or not
-isDate(new Date())
+format.isDate(new Date())
 // true
 
 // Get month name
-dayMonthName('month', 2)
+format.dayMonthName('month', 2)
 // February
 
 // Get day name
-dayMonthName('day', '2022-10-01')
+format.dayMonthName('day', '2022-10-01')
 // Saturday
+
+// Get first date of month
+format.firstOrLastMonth('first', '2022-01-01')
+// 2022-01-01T14:14:24.668Z
+
+// Get last date of month
+format.firstOrLastMonth('last', '2022-01-01')
+// 2022-01-31T14:14:24.668Z
+
+// Get first and last date of month
+format.firstOrLastMonth('firstlast', '2022-01-01')
+// ["2022-01-01T14:14:24.668Z", "2022-01-31T14:14:24.668Z"]
 ```
 
 ### Format options
