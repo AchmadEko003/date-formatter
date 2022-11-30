@@ -54,7 +54,7 @@ const PururuDate = class PururuDate {
    * @param
    * (next/back, number next or back, date) => ('n', 1, 2022-10-10)
    * @type
-   * n = Next month
+   * next = Next month
    * b = Backward month
    */
   static nextBackMonth(type, numberDate, date = null) {
@@ -62,7 +62,7 @@ const PururuDate = class PururuDate {
 
     let month = 0;
 
-    if (type === "n") {
+    if (type === "next") {
       month = tempDate.getMonth() + numberDate;
     } else {
       month = tempDate.getMonth() - numberDate;
@@ -74,17 +74,17 @@ const PururuDate = class PururuDate {
 
   /** Menambahkan atau mengurangkan beberapa hari.
    * @param
-   * (next/back, number next or back, date) => ('n', 1, 2022-10-10)
+   * (next/back, number next or back, date) => ('next', 1, 2022-10-10)
    * @type
-   * n = Next date
-   * b = Backward date
+   * next = Next date
+   * back = Backward date
    */
   static nextBackDate(type, numberDate, date = null) {
     const tempDate = date ? new Date(date) : new Date();
 
     let dateRes = 0;
 
-    if (type === "n") {
+    if (type === "next") {
       dateRes = tempDate.getDate() + numberDate;
     } else {
       dateRes = tempDate.getDate() - numberDate;
@@ -200,26 +200,22 @@ const PururuDate = class PururuDate {
   static dateISOFormat(format, date = new Date()) {
     try {
       const dateRes = [];
-      
       if (!PururuDate.isDate(date)) {
-        date = date.includes("T") ? date.split("T")[0] : date
-        const dateSeparator = symbols.filter((type) => {
-          return date.includes(type) === true;
-        })[0];
-        date = new Date(date.replaceAll(dateSeparator, "/"));
+        date = date.includes("T") ? date.split("T")[0] : date;
+        date = new Date(date.replaceAll(getSeparator(date), "/"));
       }
-      
-      const dateConvertRes = setDateParams(date)
-      
+
+      const dateConvertRes = setDateParams(date);
+
       const tempSeparator = symbols.filter((type) => {
         const ds = format.includes(type);
         return ds === true;
       })[0];
-      
+
       if (!symbols.includes(tempSeparator)) {
         return "Format not match";
       }
-      
+
       format.split(tempSeparator).forEach((element) => {
         dateRes.push(dateConvertRes[element]);
       });
@@ -231,8 +227,11 @@ const PururuDate = class PururuDate {
   }
 
   /** Formatting time
-   * @parameter
-   * (HH:MM:ss)
+   * @param {String} format format date needed
+   * @param {Date|String} time date value that will formatted
+   * @returns {String} time
+   * @example
+   * var date = PururuDate.timeFormat('hh:MM:ss TT', '16:30');
    *
    * @hour
    * h = Without zero in single-digits Hour (12-hour clock),
@@ -248,34 +247,43 @@ const PururuDate = class PururuDate {
    * s = Without zero in single-digits Seconds,
    * ss = Add zero in single-digits Seconds
    */
-  static timeFormat(format, date = null) {
+  static timeFormat(format, time = null) {
     const timeRes = [];
-    const arrFormat = format.split(":");
-    const timeFormat = date ? date.split(":") : null;
+    const timeMarker = format.includes("T") || format.includes("TT");
+    const arrFormat = timeMarker
+      ? format.split(" ")[0].split(":")
+      : format.split(":");
+    const timeFormat = time ? time.split(":") : null;
 
     let tempTime = new Date();
     tempTime = new Date(
       tempTime.getFullYear(),
       tempTime.getMonth(),
       tempTime.getDate(),
-      timeFormat ? timeFormat[0] : tempTime.getHours(),
-      timeFormat ? timeFormat[1] : tempTime.getMinutes(),
-      timeFormat ? timeFormat[2] : tempTime.getSeconds()
+      timeFormat[0] ? timeFormat[0] : tempTime.getHours(),
+      timeFormat[1] ? timeFormat[1] : tempTime.getMinutes(),
+      timeFormat[2] ? timeFormat[2] : tempTime.getSeconds()
     );
 
+    const tempRes = setDateParams(tempTime);
+
     arrFormat.forEach((element) => {
-      timeRes.push(tFormattingType(tempTime, element));
+      timeRes.push(tempRes[element]);
     });
 
-    if (arrFormat[0] === "h" || arrFormat[0] === "hh") {
-      return tTo12Convert(timeRes.join(":"), arrFormat[0] === "hh");
-    }
-
-    return timeRes.join(":");
+    return `${timeRes.join(":")}${timeMarker ? " " + tempRes[format.split(" ")[1]] : ""}`;
   }
 };
 
-function setDateParams (payload) {
+function getSeparator(payload) {
+  const dateSeparator = symbols.filter((type) => {
+    return payload.includes(type) === true;
+  })[0];
+
+  return dateSeparator;
+}
+
+function setDateParams(payload) {
   date = {
     d: parseInt(payload.getDate()),
     dd: setZero(payload.getDate()),
@@ -286,34 +294,20 @@ function setDateParams (payload) {
     mmm: months[payload.getMonth()].slice(0, 3),
     mmmm: months[payload.getMonth()],
     yy: parseInt(payload.getFullYear().toString().slice(-2)),
-    yyyy: payload.getFullYear()
-  }
+    yyyy: payload.getFullYear(),
+    h: parseInt(payload.getHours() % 12 || 12),
+    hh: setZero(payload.getHours() % 12 || 12),
+    H: parseInt(payload.getHours()),
+    HH: setZero(payload.getHours()),
+    M: parseInt(payload.getMinutes()),
+    MM: setZero(payload.getMinutes()),
+    s: parseInt(payload.getSeconds()),
+    ss: setZero(payload.getSeconds()),
+    T: payload.getHours() < 12 ? "A" : "P",
+    TT: payload.getHours() < 12 ? "AM" : "PM",
+  };
 
-  return date
-}
-
-function tFormattingType(payload, type) {
-  const char = type.charAt(0).toLowerCase();
-
-  if (char === "h") {
-    return setZero(payload.getHours());
-  }
-
-  if (char === "m") {
-    if (type === "M") {
-      return payload.getMinutes();
-    } else if (type === "MM") {
-      return setZero(payload.getMinutes());
-    }
-  }
-
-  if (char === "s") {
-    if (type === "s") {
-      return payload.getSeconds();
-    } else if (type === "ss") {
-      return setZero(payload.getSeconds());
-    }
-  }
+  return date;
 }
 
 // Convert time 24 to 12

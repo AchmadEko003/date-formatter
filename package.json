@@ -1,0 +1,26 @@
+{
+  "name": "@achmadeko003/date-formatter",
+  "version": "1.0.5",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/AchmadEko003/date-formatter.git"
+  },
+  "keywords": [
+    "formater",
+    "date-format",
+    "date-formater",
+    "time-format",
+    "time-formater"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AchmadEko003/date-formatter/issues"
+  },
+  "homepage": "https://github.com/AchmadEko003/date-formatter#readme"
+}
